@@ -16,4 +16,5 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 ## Video Demo
-[![Demo Video](https://youtu.be/UGM3rnnLG1A.jpg)](https://youtu.be/UGM3rnnLG1A)
+[![Tonton Video](https://img.youtube.com/vi/UGM3rnnLG1A/maxresdefault.jpg)](https://www.youtube.com/watch?v=UGM3rnnLG1A)
+
