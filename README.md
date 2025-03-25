@@ -1,6 +1,6 @@
 # contactlist_phone
 
-A new Flutter project.
+Referensi: https://www.youtube.com/watch?v=drk6d2WilLo&t=391s
 
 ## Getting Started
 
