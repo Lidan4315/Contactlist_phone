@@ -1,19 +1,40 @@
 # contactlist_phone
 
-Referensi: https://www.youtube.com/watch?v=drk6d2WilLo&t=391s
+Aplikasi sederhana untuk menambahkan kontak HP seseorang juga mengedit dan menghapusnya.
 
-## Getting Started
+Referensi:
+- youtube : https://www.youtube.com/watch?v=drk6d2WilLo&t=391s
+- github : https://github.com/jatinderji/contacts_list_app
 
-This project is a starting point for a Flutter application.
+## Perubahan
 
-A few resources to get you started if this is your first Flutter project:
+1. Menambahkan animasi dari lottie saat tidak ada kontak
+2. Membuat halaman berbeda untuk menambahkan kontak hp
+3. Memperbaiki UI agar terlihat lebih baik
+4. Ada perubahan logika pada bagian editnya
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Tampilan Aplikasi
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<div align="center">
+<table>
+  <tr align="center">
+    <td><b>Empty Page</b></td>
+    <td><b>List Page</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/d267e43f-d00b-4cef-8fb9-ed1f7983971b" alt="Empty Page" width="250"></td>
+    <td><img src="https://github.com/user-attachments/assets/4bbcc2fe-9a61-48ec-af52-82c8df56488b" alt="List Page" width="250"></td>
+  </tr>
+  <tr align="center">
+    <td><b>Add Page</b></td>
+    <td><b>Edit Page</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/fac02598-7398-4bab-898e-9bed47d7437d" alt="Add Page" width="250"></td>
+    <td><img src="https://github.com/user-attachments/assets/be26c533-3c2a-4ab0-93de-c1f9d55a730c" alt="Edit Page" width="250"></td>
+  </tr>
+</table>
+</div>
 
 ## Video Demo
 [![Tonton Video](https://img.youtube.com/vi/UGM3rnnLG1A/maxresdefault.jpg)](https://www.youtube.com/watch?v=UGM3rnnLG1A)
