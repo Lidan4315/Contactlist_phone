@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'contact.dart';
+import 'db_helper.dart';
 
 class AddContactPage extends StatefulWidget {
   final Contact? contact;
@@ -13,6 +14,7 @@ class AddContactPage extends StatefulWidget {
 class _AddContactPageState extends State<AddContactPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
+  final DBHelper dbHelper = DBHelper();
 
   @override
   void initState() {
@@ -23,32 +25,46 @@ class _AddContactPageState extends State<AddContactPage> {
     }
   }
 
-  void saveContact() {
+  Future<void> saveContact() async {
     String name = nameController.text.trim();
-    String contact = contactController.text.trim();
+    String number = contactController.text.trim();
 
-    if (name.isEmpty || contact.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Name and Contact cannot be empty!')),
-      );
+    if (name.isEmpty || number.isEmpty) {
+      showSnackbar('Name and number cannot be empty!');
       return;
     }
 
-    if (contact.length < 10) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Contact number must be at least 10 digits!')),
-      );
+    if (number.length < 10) {
+      showSnackbar('Number must be at least 10 digits!');
       return;
     }
 
-    Navigator.pop(context, Contact(name: name, contact: contact));
+    // Cek duplikat di database
+    final allContacts = await dbHelper.getContacts();
+    bool isDuplicate = allContacts.any((c) =>
+    (c.name.toLowerCase() == name.toLowerCase() ||
+        c.contact == number) &&
+        c.id != widget.contact?.id);
+
+    if (isDuplicate) {
+      showSnackbar('Name or number already exists!');
+      return;
+    }
+
+    final newContact = Contact(name: name, contact: number);
+    Navigator.pop(context, newContact);
+  }
+
+  void showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.contact != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.contact == null ? 'Add Contact' : 'Edit Contact'),
+        title: Text(isEditing ? 'Edit Contact' : 'Add Contact'),
         backgroundColor: Colors.purple,
       ),
       body: Padding(
@@ -76,7 +92,7 @@ class _AddContactPageState extends State<AddContactPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: saveContact,
-              child: Text(widget.contact == null ? 'Save' : 'Update'),
+              child: Text(isEditing ? 'Update' : 'Save'),
             ),
           ],
         ),
