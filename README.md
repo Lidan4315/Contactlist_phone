@@ -39,3 +39,147 @@ Referensi:
 ## Video Demo
 [![Tonton Video](https://img.youtube.com/vi/UGM3rnnLG1A/maxresdefault.jpg)](https://www.youtube.com/watch?v=UGM3rnnLG1A)
 
+# Tugas 2 (contactlist_phone using Sqflite)
+
+## Langkah-Langkah
+- Run `flutter pub add sqflite`
+- Periksa `pubspec.yaml` jika sudah ada bagian seperti dibawah ini berarti instalasi sqlite sudah berhasil:
+  ````
+  dependencies:
+  sqflite:
+  ````
+
+## Penjelasan Kode
+### DB Helper
+Jadi saya membuat kelas spesial bernama DBHelper untuk memmudahkan kita melakukan perubahan di databasenya seperti menambahkan, mengubah, dan mengahpus kontak.Untuk melakukan perubahan tersebut kita menggunakan `dbClient.<nama_fungsi>`. Berikut adalah penjelasan lebih detailnya:
+````
+static final DBHelper _instance = DBHelper._internal();
+factory DBHelper() => _instance;
+DBHelper._internal();
+````
+Agar database tidak dibuka terus menerus, cukup sekali saja.
+
+````
+static Database? _db;
+````
+Tempat untuk penyimpanan databasenya dimana awalnya kosong (null).
+
+````
+Future<Database> get db async {
+  if (_db != null) return _db!;
+  _db = await initDB();
+  return _db!;
+}
+````
+Untuk langsung memakai database ketika dibuka dan jika tidak dipakai maka akan `init` dahulu.
+
+````
+Future<Database> initDB() async {
+  final path = join(await getDatabasesPath(), 'contacts.db');
+  return await openDatabase(
+    path,
+    version: 1,
+    onCreate: (db, version) async {
+      await db.execute('''
+        CREATE TABLE contacts (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          contact TEXT NOT NULL
+        )
+      ''');
+    },
+  );
+}
+````
+Membuat database jika belum ada, buat file contacts.db, dan buat database yang sesuai.
+
+````
+Future<int> insertContact(Contact contact) async {
+    final dbClient = await db;
+    return await dbClient.insert('contacts', contact.toMap());
+  }
+````
+Untuk menambahkan kontak baru ke dalam tabel contacts dengan data diubah dulu jadi bentuk Map.
+
+````
+  Future<List<Contact>> getContacts() async {
+    final dbClient = await db;
+    final List<Map<String, dynamic>> maps = await dbClient.query('contacts');
+    return List.generate(maps.length, (i) => Contact.fromMap(maps[i]));
+  }
+````
+Ambil semua baris dari tabel contacts.
+
+````
+  Future<List<Contact>> getContacts() async {
+    final dbClient = await db;
+    final List<Map<String, dynamic>> maps = await dbClient.query('contacts');
+    return List.generate(maps.length, (i) => Contact.fromMap(maps[i]));
+  }
+````
+Temukan baris dengan id yang cocok, lalu ganti isinya sesuai data baru.
+
+````
+  Future<int> deleteContact(int id) async {
+    final dbClient = await db;
+    return await dbClient.delete(
+      'contacts',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+````
+Temukan kontak dengan id yang cocok lalu hapus dari database.
+
+````
+  Future<bool> contactExists(String name, String number) async {
+    final dbClient = await db;
+    final List<Map<String, dynamic>> maps = await dbClient.query(
+      'contacts',
+      where: 'name = ? OR contact = ?',
+      whereArgs: [name, number],
+    );
+    return maps.isNotEmpty;
+  }
+````
+Untuk menemukan apakah kontak sudah pernah disimpan atau belum
+
+### Contact.dart
+Berisi class Contact untuk menyimpan satu kontak dalam bentuk "kotak data"
+
+````
+Map<String, dynamic> toMap() {
+  var map = {
+    'name': name,
+    'contact': contact,
+  };
+  if (id != null) {
+    map['id'] = id;
+  }
+  return map;
+}
+````
+Database butuh format seperti peta (Map) agar bisa disimpan dan fungsi ini mengubah Contact jadi bentuk yang bisa disimpan ke SQLite.
+
+````
+  factory Contact.fromMap(Map<String, dynamic> map) {
+    return Contact(
+      id: map['id'],
+      name: map['name'],
+      contact: map['contact'],
+    );
+  }
+````
+Fungsi `fromMap` ini tugasnya untuk mengubah Map  menjadi objek Contact lagi.
+
+### Implementasi DB helper
+Contoh mengambil kontak yang sudah di simpan dan ditampilkan di `home_page.dart`.
+````
+  Future<void> refreshContacts() async {
+    final data = await dbHelper.getContacts();
+    setState(() {
+      contacts = data;
+    });
+  }
+````
+Kita tinggal memanggil fungsi yang sudah kita buat di `DB helper` dengan `dbhelper.<nama_fungsi>`.
